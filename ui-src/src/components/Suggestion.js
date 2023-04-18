@@ -1,11 +1,13 @@
+/* eslint-disable no-undef */
 import React, { useEffect, useState } from "react";
 import { Button } from "@twilio/flex-ui";
 import * as Flex from "@twilio/flex-ui";
-import { fetchOpenAIResponse } from "../../services/fetchOpenAIResponse";
+import { fetchOpenAIResponse } from "../services/fetchOpenAIResponse";
 import { Spinner } from "@twilio-paste/core/spinner";
 
 const Suggestion = ({ conversationSid }) => {
-  const [suggestedResponseEnabled, setSuggestedResponseEnabled] = useState("true");
+  const [suggestedResponseEnabled, setSuggestedResponseEnabled] =
+    useState("true");
   console.log("suggested response enabled var:" + suggestedResponseEnabled);
   const [isLoading, setIsLoading] = useState(false);
   const [currResponse, setCurrResponse] = useState("");
@@ -44,8 +46,9 @@ const Suggestion = ({ conversationSid }) => {
           } else {
             setLastCustomerMessage("");
           }
-          const response = Flex.Manager.getInstance().store.getState().flex.chat
-            .conversationInput[conversationSid].inputText;
+          const response =
+            Flex.Manager.getInstance().store.getState().flex.chat
+              .conversationInput[conversationSid].inputText;
           setCurrResponse(response);
         } else {
           setLastCustomerMessage("");
@@ -91,7 +94,8 @@ const Suggestion = ({ conversationSid }) => {
         variant="primary"
         onClick={handleSuggestedResponseClick}
       >
-        AI Response {isLoading && <Spinner decorative={false} title="Loading" />}
+        AI Response{" "}
+        {isLoading && <Spinner decorative={false} title="Loading" />}
       </Button>
     )
   );

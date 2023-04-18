@@ -1,6 +1,6 @@
-import React from 'react';
-const Button = require("@twilio-paste/core").Button;
+import React from "react";
 
+// eslint-disable-next-line react/display-name
 export default function (props) {
   const {
     isFromMe,
@@ -12,6 +12,12 @@ export default function (props) {
   } = props.message;
 
   return (
-    (!isFromMe && <div>{sentiment}{summarizedText}</div>) || null
+    (!isFromMe && (
+      <div>
+        {sentiment}
+        {summarizedText}
+      </div>
+    )) ||
+    null
   );
-};
+}
