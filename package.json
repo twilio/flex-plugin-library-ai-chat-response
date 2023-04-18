@@ -1,0 +1,18 @@
+{
+  "name": "flex-plugin-library-community-ai-chat-response",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "makeassetsprivate": "cd ui-src/build && sh ../../scripts/makeAssetsPrivate.sh",
+    "build": "cd ui-src && twilio flex:plugins:build && cd .. && npm run makeassetsprivate"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "openai":"3.2.1",
+    "twilio-flex-token-validator":"1.5.8",
+    "@twilio-labs/runtime-helpers": "^0.1.2",
+    "@twilio-labs/serverless-api": "^5.5.0"
+  },
+  "devDependencies": {
+  }
+}
