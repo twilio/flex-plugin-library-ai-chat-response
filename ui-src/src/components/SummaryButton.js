@@ -50,9 +50,10 @@ export default function (props) {
   };
 
   return (
-    (summaryEnabled === true &&
+    (summaryEnabled === "true" &&
       !isFromMe &&
-      props.message?.source?.state?.body.length > Number(summaryThreshold) && (
+      props.message?.source?.state?.body.length > Number(summaryThreshold) && 
+      (
         <Button
           onClick={addSummaryToMessage}
           variant="primary"
