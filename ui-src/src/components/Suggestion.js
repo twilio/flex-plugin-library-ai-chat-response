@@ -18,7 +18,6 @@ const Suggestion = ({ conversationSid }) => {
     context = process.env.REACT_APP_CONTEXT;
     context = context.replace(/[^a-zA-Z0-9 ]/g, "");
   }
-
   useEffect(() => {
     let isMounted = true;
     Flex.Manager.getInstance().store.subscribe(() => {
