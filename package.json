@@ -13,5 +13,8 @@
     "@twilio-labs/runtime-helpers": "^0.1.2",
     "@twilio-labs/serverless-api": "^5.5.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "engines": {
+    "node": "14"
+  }
 }
