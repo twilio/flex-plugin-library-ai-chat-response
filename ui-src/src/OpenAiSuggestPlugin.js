@@ -17,6 +17,8 @@ export default class OpenAiSuggestPlugin extends FlexPlugin {
       PasteThemeProvider: CustomizationProvider,
     });
 
+    console.log("Dummy log !!!")
+
     flex.MessageInputActions.Content.add(
       <Suggestion
         key="Suggestion"
