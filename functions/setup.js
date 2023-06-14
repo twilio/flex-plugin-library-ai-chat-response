@@ -1,8 +1,5 @@
 const helpers = require("@twilio-labs/runtime-helpers");
 const {
-  listEnvironments,
-} = require("@twilio-labs/serverless-api/dist/api/environments");
-const {
   getOrCreateAssetResources,
   uploadAsset,
 } = require("@twilio-labs/serverless-api/dist/api/assets");
@@ -14,7 +11,7 @@ const {
   activateBuild,
 } = require("@twilio-labs/serverless-api/dist/api/builds");
 
-async function loadPluginData(context, pluginName, replacementMap) {
+async function loadPluginData(pluginName, replacementMap) {
   return [".js", ".js.LICENSE.txt", ".js.map"].map((suffix) => {
     const filename = pluginName + suffix;
     let content = Runtime.getAssets()["/" + filename].open();
@@ -38,35 +35,20 @@ function getAssetBaseUrl(pluginName, version) {
 
 async function uploadFiles(assets, serviceSid, serverlessClient) {
   const assetsToUpload = await getOrCreateAssetResources(
-    assets,
-    serviceSid,
-    serverlessClient
+      assets,
+      serviceSid,
+      serverlessClient
   );
   return Promise.all(
-    assetsToUpload.map((asset) => {
-      return uploadAsset(
-        asset,
-        serviceSid,
-        serverlessClient,
-        serverlessClient.config
-      );
-    })
+      assetsToUpload.map((asset) => {
+        return uploadAsset(
+            asset,
+            serviceSid,
+            serverlessClient,
+            serverlessClient.config
+        );
+      })
   );
-}
-
-async function getEnvironment(serverlessApiClient, serviceSid, pluginName) {
-  const environments = await listEnvironments(serviceSid, serverlessApiClient);
-  const pluginEnvironment = environments.find((environment) => {
-    return environment.unique_name.toLowerCase() === pluginName.toLowerCase();
-  });
-
-  if (pluginEnvironment) {
-    return {
-      environmentSid: pluginEnvironment.sid,
-      buildSid: pluginEnvironment.build_sid,
-      domain_name: pluginEnvironment.domain_name,
-    };
-  }
 }
 
 exports.handler = async function (context, event, callback) {
@@ -83,12 +65,15 @@ exports.handler = async function (context, event, callback) {
     username: context.ACCOUNT_SID,
     password: context.AUTH_TOKEN,
   });
+  const currentEnvironment = await helpers.environment.getCurrentEnvironment(
+      context
+  );
+  const { buildSid, sid: environmentSid, domainName } = currentEnvironment;
   try {
     if (!context.IN_PROGRESS_BUILD_SID) {
       const [bundleData, sourceMapData] = await loadPluginData(
-        context,
-        pluginName,
-        replacementMap
+          pluginName,
+          replacementMap
       );
       const assetsToUpload = [
         {
@@ -108,14 +93,9 @@ exports.handler = async function (context, event, callback) {
       ];
 
       const assetSids = await uploadFiles(
-        assetsToUpload,
-        serviceSid,
-        serverlessClient
-      );
-      const { buildSid } = await getEnvironment(
-        serverlessClient,
-        serviceSid,
-        pluginName
+          assetsToUpload,
+          serviceSid,
+          serverlessClient
       );
       let buildAssets = [];
       let buildFunctions = [];
@@ -129,8 +109,8 @@ exports.handler = async function (context, event, callback) {
 
       buildAssets = [
         ...buildAssets
-          .filter((x) => x.path !== bundleUri && x.path !== sourceMapUri)
-          .map((x) => x.sid),
+            .filter((x) => x.path !== bundleUri && x.path !== sourceMapUri)
+            .map((x) => x.sid),
         ...assetSids,
       ];
 
@@ -141,19 +121,17 @@ exports.handler = async function (context, event, callback) {
       };
 
       const { sid: newBuildSid } = await triggerBuild(
-        payload,
-        serviceSid,
-        serverlessClient
+          payload,
+          serviceSid,
+          serverlessClient
       );
       console.log(newBuildSid);
 
-      const currentEnvironment =
-        await helpers.environment.getCurrentEnvironment(context);
       await helpers.environment.setEnvironmentVariable(
-        context,
-        currentEnvironment,
-        "IN_PROGRESS_BUILD_SID",
-        newBuildSid
+          context,
+          currentEnvironment,
+          "IN_PROGRESS_BUILD_SID",
+          newBuildSid
       );
       return callback(null, {
         status: "building",
@@ -161,33 +139,26 @@ exports.handler = async function (context, event, callback) {
       });
     }
     const status = await getBuildStatus(
-      context.IN_PROGRESS_BUILD_SID,
-      serviceSid,
-      serverlessClient
-    );
-    if (status === "completed") {
-      const { environmentSid, domain_name } = await getEnvironment(
-        serverlessClient,
-        serviceSid,
-        pluginName
-      );
-      await activateBuild(
         context.IN_PROGRESS_BUILD_SID,
-        environmentSid,
         serviceSid,
         serverlessClient
+    );
+    if (status === "completed") {
+      await activateBuild(
+          context.IN_PROGRESS_BUILD_SID,
+          environmentSid,
+          serviceSid,
+          serverlessClient
       );
-      const currentEnvironment =
-        await helpers.environment.getCurrentEnvironment(context);
       await helpers.environment.setEnvironmentVariable(
-        context,
-        currentEnvironment,
-        "IN_PROGRESS_BUILD_SID",
-        ""
+          context,
+          currentEnvironment,
+          "IN_PROGRESS_BUILD_SID",
+          ""
       );
       return callback(null, {
         status: "completed",
-        pluginURI: `https://${domain_name}${pluginBaseUrl}/bundle.js`,
+        pluginURI: `https://${domainName}${pluginBaseUrl}/bundle.js`,
       });
     } else {
       return callback(null, { status: "building" });
