@@ -5,7 +5,7 @@ Plugin is ready to use once it is installed and the browser window is refreshed.
 - A AI Response button is added to the task canvas.
 - Clicking this button generates response according to the last message received from customer.
 - The suggested response comes from chat GPT4 open AI.
-- Agent can send the response directly or edit it accordingly before sending.
+- Agent can send response directly or edit it accordingly before sending.
 
 ## Installation
 During installation, 2 fields are required:
