@@ -19,7 +19,6 @@ exports.handler = TokenValidator(function (context, event, callback) {
   const eventcontext = event.context;
 
   console.log("this is what i got from flex:", spokenInput);
-  console.log("Test log");
 
   // Getting the API key from Twilio environment variables
   const API_KEY = process.env.OPENAI_API_KEY;

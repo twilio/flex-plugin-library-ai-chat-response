@@ -1,0 +1,16 @@
+name: Skip Version Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'ui-src/**'
+      - 'functions/**'
+
+jobs:
+  versionCheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo "Package version check is not required for these changes. Passing status check"
