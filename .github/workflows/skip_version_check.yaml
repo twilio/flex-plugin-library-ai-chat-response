@@ -1,4 +1,4 @@
-name: Package Version Check
+name: Skip Version Check
 
 on:
   pull_request:
