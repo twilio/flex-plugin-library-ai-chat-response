@@ -24,7 +24,6 @@ jobs:
           echo "Package version check is not required for these changes. Passing status check"
           exit 0
 
-      - name: Package version Check
       - uses: actions/checkout@v3
       - name: Get package json of current branch
         id: branchPackageJson
