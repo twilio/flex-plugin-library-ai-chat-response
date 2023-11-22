@@ -4,14 +4,30 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'ui-src/**'
-      - 'functions/**'
 
 jobs:
-  versionCheck:
+  changes:
     runs-on: ubuntu-latest
+    outputs:
+      filesChanged: ${{ steps.filter.outputs.files }}
+    steps:
+      - name: Check changed files
+        uses: dorny/paths-filter@v2
+        id: changedFiles
+        with:
+          filters: |
+            files:
+              - 'ui-src/**'
+              - 'functions/**'
 
+      - name: Skip version check
+        if: steps.changedFiles.outputs.files == 'false'
+        run: echo "Package version check is not required for these changes. Passing status check"
+
+  versionCheck:
+    needs: isVersionCheckRequired
+    if: ${{ needs.changes.outputs.filesChanged == 'true' }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Get package json of current branch
@@ -39,3 +55,10 @@ jobs:
 
       - name: Package version is Updated
         run: echo "All Good"
+
+  skipVersionCheck:
+    needs: isVersionCheckRequired
+    if: ${{ needs.changes.outputs.filesChanged == 'false' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Package version check is not required for these changes. Passing status check"
