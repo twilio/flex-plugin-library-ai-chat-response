@@ -25,7 +25,7 @@ jobs:
         run: echo "Package version check is not required for these changes. Passing status check"
 
   versionCheck:
-    needs: isVersionCheckRequired
+    needs: changes
     if: ${{ needs.changes.outputs.filesChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -57,7 +57,7 @@ jobs:
         run: echo "All Good"
 
   skipVersionCheck:
-    needs: isVersionCheckRequired
+    needs: changes
     if: ${{ needs.changes.outputs.filesChanged == 'false' }}
     runs-on: ubuntu-latest
     steps:
