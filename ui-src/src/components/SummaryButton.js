@@ -36,7 +36,7 @@ export default function (props) {
       // Disable the button after a successful API call
       setDisabled(true);
     } catch (error) {
-      console.error("Error summarizing message:", error);
+      console.error("Error summarizing message : ", error);
     }
   };
 
