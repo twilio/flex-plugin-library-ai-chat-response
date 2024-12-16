@@ -16,7 +16,7 @@
   "dependencies": {
     "@twilio-paste/core": "^17.2.0",
     "@twilio-paste/icons": "^9.4.2",
-    "@twilio/flex-plugin-scripts": "6.0.4",
+    "@twilio/flex-plugin-scripts": "6.2.0",
     "dotenv": "^16.0.3",
     "eslint-config-twilio": "^2.0.0",
     "prop-types": "^15.8.1",
